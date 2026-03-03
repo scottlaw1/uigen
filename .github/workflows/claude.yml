@@ -41,30 +41,6 @@ jobs:
         with:
           anthropic_api_key: ${{ secrets.ANTHROPIC_API_KEY }}
 
-          custom_instructions: |
-            The project is already set up with all dependencies installed.
-            The server is already running at localhost:3000.  Logs from it
-            are being written to logs.txt.  If needed, you can query the db with
-            the 'sqlite3' cli.  If needed, use the mcp__playwright
-            set of tools to launch a browser and interact with the app.
-
-          mcp_config: |
-            {
-              "mcpServers": {
-                "playwright": {
-                  "command": "npx",
-                  "args": [
-                    "playwright/mcp@latests",
-                    "--allowed-origins",
-                    "localhost:3000;cdn.tailwindcss.com;esm.sh"
-                  ]
-                }
-              }
-            }
-
-
-          allowed_tools: "Bash(npm:*),Bash(sqlite3:*),mcp__playwright__browser_snapshot,mcp__playwright__browser_click,mcp__playwright__fill,mcp__playwright__goto"
-          
           # This is an optional setting that allows Claude to read CI results on PRs
           additional_permissions: |
             actions: read
@@ -75,5 +51,9 @@ jobs:
           # Optional: Add claude_args to customize behavior and configuration
           # See https://github.com/anthropics/claude-code-action/blob/main/docs/usage.md
           # or https://code.claude.com/docs/en/cli-reference for available options
-          # claude_args: '--allowed-tools Bash(gh pr:*)'
-
+          claude_args: |
+            --append-system-prompt "The project is already set up with all dependencies installed. 
+              The server is already running at localhost:3000.  Logs from it are being written to logs.txt.  
+              If needed, you can query the db with the 'sqlite3' cli.  
+              If needed, use the mcp__playwright set of tools to launch a browser and interact with the app." 
+            --allowed-tools Bash(npm:*),Bash(sqlite3:*),mcp__playwright__browser_snapshot,mcp__playwright__browser_click,mcp__playwright__fill,mcp__playwright__goto,mcp__playwright__screenshot,mcp__playwright__wait_for_selector
